@@ -1,0 +1,46 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="header-row">
+    <h1>Manage Teachers</h1>
+</div>
+
+{% if teachers %}
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Username</th><th>Assigned Class</th><th>Assign</th></tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr>
+                <td>{{ teacher.username }}</td>
+                <td>
+                    {% for cs in teacher.managed_classes.all %}
+                        {{ cs }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        None
+                    {% endfor %}
+                </td>
+                <td>
+                    <form method="post" action="{% url 'assign_teacher' teacher.id %}" style="display: flex; gap: 0.5rem;">
+                        {% csrf_token %}
+                        <select name="class_section" style="padding: 0.3rem; border-radius: 4px; border: 1px solid #ddd;">
+                            <option value="">-- Unassign --</option>
+                            {% for cs in class_sections %}
+                            <option value="{{ cs.id }}" {% if cs in teacher.managed_classes.all %}selected{% endif %}>{{ cs }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm">Save</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card">
+    <p style="color: #666; text-align: center;">No teachers yet. Approve account requests to add teachers.</p>
+</div>
+{% endif %}
+{% endblock %}

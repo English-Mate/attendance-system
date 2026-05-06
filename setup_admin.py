@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'attendance_system.settings')
 django.setup()
 
 from django.contrib.auth import get_user_model
-from attendance_app.models import Department
+from attendance_app.models import ClassSection
 
 User = get_user_model()
 
@@ -15,18 +15,18 @@ if not User.objects.filter(username='admin').exists():
         email='yuvansood1234@gmail.com',
         password='YuvanBest',
         role='admin',
+        is_student=False,
     )
-    admin.email_verified = True
-    admin.save()
-    print('Admin user created successfully!')
+    print('Admin created!')
     print('Username: admin')
-    print('Email: yuvansood1234@gmail.com')
     print('Password: YuvanBest')
 else:
-    print('Admin user already exists.')
+    print('Admin already exists.')
 
-default_dept, _ = Department.objects.get_or_create(
-    name='General',
-    defaults={'description': 'Default department'}
-)
-print(f'Department "{default_dept.name}" ready.')
+for grade in range(6, 13):
+    for section in ['A', 'B']:
+        cs, created = ClassSection.objects.get_or_create(grade=grade, section=section)
+        if created:
+            print(f'Created: {cs}')
+
+print('All classes 6-12 (A & B) ready.')

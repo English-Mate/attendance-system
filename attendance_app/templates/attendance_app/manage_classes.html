@@ -1,0 +1,28 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="header-row">
+    <h1>Classes (6-12)</h1>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Class</th><th>Assigned Teacher</th></tr>
+        </thead>
+        <tbody>
+            {% for cs in class_sections %}
+            <tr>
+                <td><strong>{{ cs }}</strong></td>
+                <td>
+                    {% if cs.teacher %}
+                        {{ cs.teacher.username }}
+                    {% else %}
+                        <span style="color: #c62828;">Unassigned</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

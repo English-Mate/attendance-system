@@ -1,0 +1,20 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card" style="max-width: 450px;">
+    <h2>Add Student to {{ class_section }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p style="color: #c62828; font-size: 0.8rem; margin-top: 0.2rem;">{{ field.errors }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Add Student</button>
+        <a href="{% url 'my_class' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

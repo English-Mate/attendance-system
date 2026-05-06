@@ -1,31 +1,37 @@
-{% extends 'attendance_app/base.html' %}
-{% block content %}
-<div class="card" style="max-width: 500px; margin: 2rem auto;">
-    <h2>Request Status</h2>
-    <table>
-        <tr><th>Name</th><td>{{ request.full_name }}</td></tr>
-        <tr><th>Email</th><td>{{ request.email }}</td></tr>
-        <tr><th>Username</th><td>{{ request.desired_username }}</td></tr>
-        <tr><th>Role</th><td>{{ request.get_role_display }}</td></tr>
-        <tr><th>Status</th><td>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Status - Attendance System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #333; }
+        .container { max-width: 450px; margin: 4rem auto; padding: 0 1rem; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; text-align: center; }
+        .card h2 { margin-bottom: 1rem; color: #1a237e; }
+        .status { font-size: 1.5rem; padding: 0.5rem 1.5rem; border-radius: 8px; display: inline-block; margin: 1rem 0; }
+        .status-pending { background: #fff3e0; color: #e65100; }
+        .status-approved { background: #e8f5e9; color: #2e7d32; }
+        .status-rejected { background: #ffebee; color: #c62828; }
+        .btn { display: block; width: 100%; padding: 0.75rem; background: #1a237e; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; margin-top: 1rem; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Request Status</h2>
+            <p><strong>{{ request.full_name }}</strong></p>
+            <div class="status status-{{ request.status }}">
+                {{ request.get_status_display }}
+            </div>
             {% if request.status == 'pending' %}
-                <span class="badge badge-late">Pending</span>
-                {% if not request.email_verified %}
-                <p style="margin-top: 0.5rem; color: #e65100;">Please verify your email first.</p>
-                {% else %}
-                <p style="margin-top: 0.5rem; color: #1565c0;">Waiting for admin approval.</p>
-                {% endif %}
-            {% elif request.status == 'approved' %}
-                <span class="badge badge-present">Approved</span>
-                <p style="margin-top: 0.5rem;">You can now log in with your credentials.</p>
-            {% else %}
-                <span class="badge badge-absent">Rejected</span>
-                {% if request.review_notes %}
-                <p style="margin-top: 0.5rem;">Reason: {{ request.review_notes }}</p>
-                {% endif %}
+            <p style="color: #666;">Your request is being reviewed by the admin.</p>
+            {% elif request.status == 'rejected' %}
+            <p style="color: #c62828;">{% if request.review_notes %}Reason: {{ request.review_notes }}{% else %}No reason provided.{% endif %}</p>
             {% endif %}
-        </td></tr>
-    </table>
-    <a href="{% url 'login' %}" class="btn" style="margin-top: 1rem;">Back to Login</a>
-</div>
-{% endblock %}
+            <a href="{% url 'login' %}" class="btn">Back to Login</a>
+        </div>
+    </div>
+</body>
+</html>

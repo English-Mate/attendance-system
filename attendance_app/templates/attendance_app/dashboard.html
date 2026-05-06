@@ -1,11 +1,13 @@
 {% extends 'attendance_app/base.html' %}
 {% block content %}
-<h1 style="margin-bottom: 1.5rem;">Dashboard</h1>
+<div class="header-row">
+    <h1>Dashboard</h1>
+</div>
 
 <div class="stats">
     <div class="stat-card">
-        <div class="number">{{ total_users }}</div>
-        <div class="label">Total Users</div>
+        <div class="number">{{ total_students }}</div>
+        <div class="label">Total Students</div>
     </div>
     <div class="stat-card">
         <div class="number" style="color: #2e7d32;">{{ present_today }}</div>
@@ -15,10 +17,6 @@
         <div class="number" style="color: #c62828;">{{ absent_today }}</div>
         <div class="label">Absent Today</div>
     </div>
-    <div class="stat-card">
-        <div class="number" style="color: #e65100;">{{ late_today }}</div>
-        <div class="label">Late Today</div>
-    </div>
     {% if pending_requests %}
     <div class="stat-card" style="border: 2px solid #ff9800;">
         <div class="number" style="color: #ff9800;">{{ pending_requests }}</div>
@@ -27,55 +25,31 @@
     {% endif %}
 </div>
 
+{% if user.is_teacher %}
 <div class="card">
-    <h2>Today's Attendance</h2>
-    {% if today_attendance %}
-    <table>
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Status</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in today_attendance %}
-            <tr>
-                <td>{{ record.user.username }}</td>
-                <td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td>
-                <td>{{ record.check_in|default:"-" }}</td>
-                <td>{{ record.check_out|default:"-" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p style="color: #666;">No attendance records for today.</p>
-    {% endif %}
+    <h2>Quick Actions</h2>
+    <a href="{% url 'mark_attendance' %}" class="btn btn-success">Mark Today's Attendance</a>
+    <a href="{% url 'my_class' %}" class="btn btn-secondary" style="margin-left: 0.5rem;">View My Class</a>
 </div>
+{% endif %}
 
+{% if students %}
 <div class="card">
-    <h2>Recent Activity</h2>
+    <h2>{% if user.is_admin %}Recent Students{% else %}My Students{% endif %}</h2>
     <table>
         <thead>
-            <tr>
-                <th>User</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Recorded By</th>
-            </tr>
+            <tr><th>Name</th><th>Class</th><th>Status</th></tr>
         </thead>
         <tbody>
-            {% for record in recent_records %}
+            {% for s in students %}
             <tr>
-                <td>{{ record.user.username }}</td>
-                <td>{{ record.date }}</td>
-                <td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td>
-                <td>{{ record.recorded_by.username|default:"System" }}</td>
+                <td>{{ s.username }}</td>
+                <td>{{ s.class_section|default:"-" }}</td>
+                <td><span class="badge badge-present">Active</span></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+{% endif %}
 {% endblock %}

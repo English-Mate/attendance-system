@@ -1,0 +1,13 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card" style="max-width: 450px;">
+    <h2>Remove Student</h2>
+    <p>Are you sure you want to remove <strong>{{ student.username }}</strong> from your class?</p>
+    <p style="color: #c62828; font-size: 0.9rem; margin-top: 0.5rem;">This action cannot be undone.</p>
+    <form method="post" style="margin-top: 1rem;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Remove</button>
+        <a href="{% url 'my_class' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

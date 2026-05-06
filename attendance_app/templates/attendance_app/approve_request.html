@@ -4,18 +4,28 @@
     <h2>Approve Request</h2>
     <table style="margin-bottom: 1rem;">
         <tr><th>Name</th><td>{{ request.full_name }}</td></tr>
-        <tr><th>Email</th><td>{{ request.email }}</td></tr>
-        <tr><th>Username</th><td>{{ request.desired_username }}</td></tr>
-        <tr><th>Role</th><td>{{ request.get_role_display }}</td></tr>
         <tr><th>Reason</th><td>{{ request.reason|default:"-" }}</td></tr>
+        <tr><th>Date</th><td>{{ request.created_at|date:"M d, Y" }}</td></tr>
     </table>
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label>Review Notes (optional)</label>
-            <textarea name="review_notes" rows="3" placeholder="Any notes about this approval..."></textarea>
+            <label>Assign to Class (optional)</label>
+            <select name="class_section">
+                <option value="">-- None --</option>
+                {% for cs in class_sections %}
+                <option value="{{ cs.id }}">{{ cs }} (unassigned)</option>
+                {% endfor %}
+            </select>
         </div>
-        <button type="submit" class="btn" style="background: #2e7d32;">Approve & Send Credentials</button>
+        <div class="form-group">
+            <label>Notes</label>
+            <textarea name="review_notes" rows="2"></textarea>
+        </div>
+        <p style="background: #fff3e0; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.9rem;">
+            A username and password will be auto-generated and shown after approval.
+        </p>
+        <button type="submit" class="btn btn-success">Approve</button>
         <a href="{% url 'account_requests' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>

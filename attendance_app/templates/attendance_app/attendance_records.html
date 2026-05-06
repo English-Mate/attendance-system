@@ -1,80 +1,47 @@
 {% extends 'attendance_app/base.html' %}
 {% block content %}
-<h1 style="margin-bottom: 1.5rem;">Attendance Records</h1>
-
-<div class="card">
-    <h2>Rosters</h2>
-    {% if rosters %}
-    <table>
-        <thead>
-            <tr><th>Name</th><th>Department</th><th>Date</th><th>Entries</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-            {% for roster in rosters %}
-            <tr>
-                <td>{{ roster.name }}</td>
-                <td>{{ roster.department.name }}</td>
-                <td>{{ roster.date }}</td>
-                <td>{{ roster.entries.count }}</td>
-                <td><a href="{% url 'roster_detail' roster.id %}" class="btn btn-sm btn-secondary">View</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p style="color: #666;">No rosters found.</p>
-    {% endif %}
+<div class="header-row">
+    <h1>Attendance Records</h1>
 </div>
 
 <div class="card">
-    <h2>Individual Records</h2>
     <form method="get" class="filters">
         <input type="date" name="date" value="{{ request.GET.date }}">
-        {% if users %}
-        <select name="user">
-            <option value="">All Users</option>
-            {% for u in users %}
-            <option value="{{ u.id }}" {% if request.GET.user == u.id|stringformat:"s" %}selected{% endif %}>{{ u.username }}</option>
+        <select name="status">
+            <option value="">All</option>
+            <option value="present" {% if request.GET.status == 'present' %}selected{% endif %}>Present</option>
+            <option value="absent" {% if request.GET.status == 'absent' %}selected{% endif %}>Absent</option>
+        </select>
+        {% if students %}
+        <select name="student">
+            <option value="">All Students</option>
+            {% for s in students %}
+            <option value="{{ s.id }}">{{ s.username }}</option>
             {% endfor %}
         </select>
         {% endif %}
-        <select name="status">
-            <option value="">All Statuses</option>
-            <option value="present" {% if request.GET.status == 'present' %}selected{% endif %}>Present</option>
-            <option value="absent" {% if request.GET.status == 'absent' %}selected{% endif %}>Absent</option>
-            <option value="late" {% if request.GET.status == 'late' %}selected{% endif %}>Late</option>
-            <option value="excused" {% if request.GET.status == 'excused' %}selected{% endif %}>Excused</option>
-        </select>
         <button type="submit" class="btn btn-sm">Filter</button>
     </form>
 
     {% if records %}
     <table>
         <thead>
-            <tr>
-                <th>User</th>
-                <th>Date</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Status</th>
-                <th>Notes</th>
-            </tr>
+            <tr><th>Date</th><th>Student</th>{% if user.is_admin %}<th>Class</th>{% endif %}<th>Status</th><th>Notes</th></tr>
         </thead>
         <tbody>
-            {% for record in records %}
+            {% for r in records %}
             <tr>
-                <td>{{ record.user.username }}</td>
-                <td>{{ record.date }}</td>
-                <td>{{ record.check_in|default:"-" }}</td>
-                <td>{{ record.check_out|default:"-" }}</td>
-                <td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td>
-                <td>{{ record.notes|truncatechars:30|default:"-" }}</td>
+                <td>{{ r.date }}</td>
+                <td>{{ r.student.username }}</td>
+                {% if user.is_admin %}<td>{{ r.class_section }}</td>{% endif %}
+                <td><span class="badge badge-{{ r.status }}">{{ r.get_status_display }}</span></td>
+                <td>{{ r.notes|default:"-" }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p style="color: #666;">No records found.</p>
+    <p style="color: #666; text-align: center;">No records found.</p>
     {% endif %}
 </div>
 {% endblock %}
