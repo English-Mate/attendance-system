@@ -1,0 +1,75 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Dashboard</h1>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="number">{{ total_users }}</div>
+        <div class="label">Total Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="number" style="color: #2e7d32;">{{ present_today }}</div>
+        <div class="label">Present Today</div>
+    </div>
+    <div class="stat-card">
+        <div class="number" style="color: #c62828;">{{ absent_today }}</div>
+        <div class="label">Absent Today</div>
+    </div>
+    <div class="stat-card">
+        <div class="number" style="color: #e65100;">{{ late_today }}</div>
+        <div class="label">Late Today</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Today's Attendance</h2>
+    {% if today_attendance %}
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Status</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in today_attendance %}
+            <tr>
+                <td>{{ record.user.username }}</td>
+                <td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td>
+                <td>{{ record.check_in|default:"-" }}</td>
+                <td>{{ record.check_out|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No attendance records for today.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Recent Activity</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Recorded By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in recent_records %}
+            <tr>
+                <td>{{ record.user.username }}</td>
+                <td>{{ record.date }}</td>
+                <td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td>
+                <td>{{ record.recorded_by.username|default:"System" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

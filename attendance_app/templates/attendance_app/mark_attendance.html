@@ -1,0 +1,20 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card" style="max-width: 600px;">
+    <h2>Mark Attendance</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p style="color: #c62828; font-size: 0.85rem; margin-top: 0.25rem;">{{ field.errors }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn">Submit Attendance</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

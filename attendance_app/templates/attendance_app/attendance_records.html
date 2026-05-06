@@ -1,0 +1,55 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Attendance Records</h1>
+
+<div class="card">
+    <form method="get" class="filters">
+        <input type="date" name="date" value="{{ request.GET.date }}">
+        {% if users %}
+        <select name="user">
+            <option value="">All Users</option>
+            {% for u in users %}
+            <option value="{{ u.id }}" {% if request.GET.user == u.id|stringformat:"s" %}selected{% endif %}>{{ u.username }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        <select name="status">
+            <option value="">All Statuses</option>
+            <option value="present" {% if request.GET.status == 'present' %}selected{% endif %}>Present</option>
+            <option value="absent" {% if request.GET.status == 'absent' %}selected{% endif %}>Absent</option>
+            <option value="late" {% if request.GET.status == 'late' %}selected{% endif %}>Late</option>
+            <option value="excused" {% if request.GET.status == 'excused' %}selected{% endif %}>Excused</option>
+        </select>
+        <button type="submit" class="btn btn-sm">Filter</button>
+    </form>
+
+    {% if records %}
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Date</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.user.username }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.check_in|default:"-" }}</td>
+                <td>{{ record.check_out|default:"-" }}</td>
+                <td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td>
+                <td>{{ record.notes|truncatechars:30|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No records found.</p>
+    {% endif %}
+</div>
+{% endblock %}

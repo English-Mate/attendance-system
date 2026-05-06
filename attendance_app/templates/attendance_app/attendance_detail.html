@@ -1,0 +1,35 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card">
+    <h2>Attendance Detail - {{ record.user.username }}</h2>
+    <table>
+        <tr><th>Date</th><td>{{ record.date }}</td></tr>
+        <tr><th>Status</th><td><span class="badge badge-{{ record.status }}">{{ record.get_status_display }}</span></td></tr>
+        <tr><th>Check In</th><td>{{ record.check_in|default:"-" }}</td></tr>
+        <tr><th>Check Out</th><td>{{ record.check_out|default:"-" }}</td></tr>
+        <tr><th>Notes</th><td>{{ record.notes|default:"-" }}</td></tr>
+        <tr><th>Recorded By</th><td>{{ record.recorded_by.username|default:"System" }}</td></tr>
+    </table>
+</div>
+
+{% if logs %}
+<div class="card">
+    <h2>Audit Log</h2>
+    <table>
+        <thead>
+            <tr><th>Action</th><th>Performed By</th><th>Timestamp</th><th>Details</th></tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.action }}</td>
+                <td>{{ log.performed_by.username|default:"System" }}</td>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.details }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
