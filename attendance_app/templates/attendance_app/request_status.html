@@ -1,0 +1,31 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+    <h2>Request Status</h2>
+    <table>
+        <tr><th>Name</th><td>{{ request.full_name }}</td></tr>
+        <tr><th>Email</th><td>{{ request.email }}</td></tr>
+        <tr><th>Username</th><td>{{ request.desired_username }}</td></tr>
+        <tr><th>Role</th><td>{{ request.get_role_display }}</td></tr>
+        <tr><th>Status</th><td>
+            {% if request.status == 'pending' %}
+                <span class="badge badge-late">Pending</span>
+                {% if not request.email_verified %}
+                <p style="margin-top: 0.5rem; color: #e65100;">Please verify your email first.</p>
+                {% else %}
+                <p style="margin-top: 0.5rem; color: #1565c0;">Waiting for admin approval.</p>
+                {% endif %}
+            {% elif request.status == 'approved' %}
+                <span class="badge badge-present">Approved</span>
+                <p style="margin-top: 0.5rem;">You can now log in with your credentials.</p>
+            {% else %}
+                <span class="badge badge-absent">Rejected</span>
+                {% if request.review_notes %}
+                <p style="margin-top: 0.5rem;">Reason: {{ request.review_notes }}</p>
+                {% endif %}
+            {% endif %}
+        </td></tr>
+    </table>
+    <a href="{% url 'login' %}" class="btn" style="margin-top: 1rem;">Back to Login</a>
+</div>
+{% endblock %}

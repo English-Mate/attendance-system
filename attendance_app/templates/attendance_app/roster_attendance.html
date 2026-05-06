@@ -1,0 +1,74 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card" style="max-width: 700px;">
+    <h2>Roster Attendance</h2>
+    <form method="post" id="rosterForm">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Roster Name</label>
+            <input type="text" name="roster_name" required placeholder="e.g., Morning Class - Section A">
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="date" value="{{ today }}" required>
+        </div>
+        <div class="form-group">
+            <label>Department</label>
+            <select name="department" id="deptSelect" required>
+                <option value="">Select Department</option>
+                {% for dept in departments %}
+                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div id="studentList" style="display: none;">
+            <h3 style="margin: 1rem 0;">Students</h3>
+            <table>
+                <thead>
+                    <tr><th>Student</th><th>Status</th><th>Notes</th></tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn" id="submitBtn" style="display: none;">Save Roster</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('deptSelect').addEventListener('change', function() {
+    const deptId = this.value;
+    if (!deptId) {
+        document.getElementById('studentList').style.display = 'none';
+        document.getElementById('submitBtn').style.display = 'none';
+        return;
+    }
+    fetch(`/api/attendance/`)
+        .then(r => r.json())
+        .then(data => {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+            fetch(`/api/students/?dept=${deptId}`)
+                .then(r => r.json())
+                .then(students => {
+                    students.forEach(s => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${s.username}</td>
+                                <td>
+                                    <select name="status">
+                                        <option value="present">Present</option>
+                                        <option value="absent">Absent</option>
+                                        <option value="late">Late</option>
+                                        <option value="excused">Excused</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" name="notes" style="width: 100%;"></td>
+                            </tr>`;
+                    });
+                    document.getElementById('studentList').style.display = 'block';
+                    document.getElementById('submitBtn').style.display = 'inline-block';
+                });
+        });
+});
+</script>
+{% endblock %}

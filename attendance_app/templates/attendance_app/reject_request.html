@@ -1,0 +1,20 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card" style="max-width: 500px;">
+    <h2>Reject Request</h2>
+    <table style="margin-bottom: 1rem;">
+        <tr><th>Name</th><td>{{ request.full_name }}</td></tr>
+        <tr><th>Email</th><td>{{ request.email }}</td></tr>
+        <tr><th>Username</th><td>{{ request.desired_username }}</td></tr>
+    </table>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Rejection Reason <span style="color: #c62828;">*</span></label>
+            <textarea name="review_notes" rows="3" required placeholder="Explain why this request is being rejected..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger">Reject Request</button>
+        <a href="{% url 'account_requests' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -19,6 +19,12 @@
         <div class="number" style="color: #e65100;">{{ late_today }}</div>
         <div class="label">Late Today</div>
     </div>
+    {% if pending_requests %}
+    <div class="stat-card" style="border: 2px solid #ff9800;">
+        <div class="number" style="color: #ff9800;">{{ pending_requests }}</div>
+        <div class="label">Pending Requests</div>
+    </div>
+    {% endif %}
 </div>
 
 <div class="card">

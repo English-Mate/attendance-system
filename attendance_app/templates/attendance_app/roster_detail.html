@@ -1,0 +1,31 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<div class="card">
+    <h2>{{ roster.name }}</h2>
+    <p><strong>Department:</strong> {{ roster.department.name }}</p>
+    <p><strong>Date:</strong> {{ roster.date }}</p>
+    <p><strong>Created by:</strong> {{ roster.created_by.username }}</p>
+</div>
+
+<div class="card">
+    <h2>Entries</h2>
+    {% if entries %}
+    <table>
+        <thead>
+            <tr><th>Student</th><th>Status</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.student.username }}</td>
+                <td><span class="badge badge-{{ entry.status }}">{{ entry.get_status_display }}</span></td>
+                <td>{{ entry.notes|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No entries found.</p>
+    {% endif %}
+</div>
+{% endblock %}

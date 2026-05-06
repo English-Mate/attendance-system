@@ -3,6 +3,31 @@
 <h1 style="margin-bottom: 1.5rem;">Attendance Records</h1>
 
 <div class="card">
+    <h2>Rosters</h2>
+    {% if rosters %}
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Department</th><th>Date</th><th>Entries</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for roster in rosters %}
+            <tr>
+                <td>{{ roster.name }}</td>
+                <td>{{ roster.department.name }}</td>
+                <td>{{ roster.date }}</td>
+                <td>{{ roster.entries.count }}</td>
+                <td><a href="{% url 'roster_detail' roster.id %}" class="btn btn-sm btn-secondary">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No rosters found.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Individual Records</h2>
     <form method="get" class="filters">
         <input type="date" name="date" value="{{ request.GET.date }}">
         {% if users %}

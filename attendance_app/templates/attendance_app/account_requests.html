@@ -1,0 +1,54 @@
+{% extends 'attendance_app/base.html' %}
+{% block content %}
+<h1 style="margin-bottom: 1.5rem;">Account Requests</h1>
+
+<div class="card">
+    <h2>Pending Requests</h2>
+    {% if pending %}
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Username</th><th>Role</th><th>Email Verified</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for req in pending %}
+            <tr>
+                <td>{{ req.full_name }}</td>
+                <td>{{ req.email }}</td>
+                <td>{{ req.desired_username }}</td>
+                <td>{{ req.get_role_display }}</td>
+                <td>{% if req.email_verified %}<span style="color: #2e7d32;">Yes</span>{% else %}<span style="color: #c62828;">No</span>{% endif %}</td>
+                <td>
+                    <a href="{% url 'approve_request' req.id %}" class="btn btn-sm" style="background: #2e7d32;">Approve</a>
+                    <a href="{% url 'reject_request' req.id %}" class="btn btn-sm btn-danger">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No pending requests.</p>
+    {% endif %}
+</div>
+
+{% if processed %}
+<div class="card">
+    <h2>Processed Requests</h2>
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Status</th><th>Reviewed By</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+            {% for req in processed %}
+            <tr>
+                <td>{{ req.full_name }}</td>
+                <td>{{ req.email }}</td>
+                <td><span class="badge badge-{{ req.status }}">{{ req.get_status_display }}</span></td>
+                <td>{{ req.reviewed_by.username|default:"-" }}</td>
+                <td>{{ req.reviewed_at|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

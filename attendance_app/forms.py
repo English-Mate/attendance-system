@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Attendance, Department
+from .models import User, Attendance, Department, AccountRequest
 
 
 class UserForm(UserCreationForm):
@@ -15,7 +15,7 @@ class UserForm(UserCreationForm):
 
 
 class AttendanceForm(forms.ModelForm):
-    user = forms.ModelChoiceField(queryset=User.objects.filter(is_active_record=True))
+    user = forms.ModelChoiceField(queryset=User.objects.filter(is_active_record=True, role='student'))
 
     class Meta:
         model = Attendance
@@ -25,4 +25,13 @@ class AttendanceForm(forms.ModelForm):
             'check_in': forms.TimeInput(attrs={'type': 'time'}),
             'check_out': forms.TimeInput(attrs={'type': 'time'}),
             'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+
+
+class AccountRequestForm(forms.ModelForm):
+    class Meta:
+        model = AccountRequest
+        fields = ['full_name', 'email', 'desired_username', 'role', 'department', 'reason']
+        widgets = {
+            'reason': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Why do you need access to this system?'}),
         }
